@@ -1,0 +1,46 @@
+= FlexDate
+
+Flexible dates for Ruby. Written by Alex Reisner (alex@alexreisner.com).
+
+
+== The Problem
+
+Imagine you are collecting dates of historic events but you don't always have
+exact dates. For example, you might know that an event occurred in March of
+1862 but you don't know the exact day. You could store this as a Ruby Date
+object that looks like '1862-03-01' but, really, you don't want to specify a
+day at all. You want to <tt>explicitly</tt> enter a part of the date as
+"unknown".
+
+
+== The Solution
+
+FlexDate addresses this problem by extending Ruby's included Date class.
+At the moment the following methods are provided to create partial dates:
+
+  year=()
+  month=()
+  day=()
+  FlexDate.new(year, month, date) # any of these parameters can be nil
+
+Where a full date (year, month, and day) is specified, a FlexDate behaves
+exactly like a normal Ruby Date. When a partial date is specified, only the
+following methods will behave as desired:
+
+  strftime
+
+
+== The Implementation
+
+You might expect FlexDate to be a subclass of Date, but this is not the case.
+That implementation is far more complicated because the instance methods
+of Date require certain instance variables to be set, and to meet certain
+requirements for validity. Massaging the Date class to accept an invalid
+date as valid is simply the wrong approach for our modest goal, which is
+simply to duplicate the behavior of the Date class and bolt on support for
+partial dates should you have one. So instead we define a very simple
+class with some (hopefully) useful methods and use method_missing to fall
+back to Date where necessary when a FlexDate is complete (not partial).
+
+
+Copyright (c) 2008 Alex Reisner (alex@alexreisner.com), released under the MIT license.
