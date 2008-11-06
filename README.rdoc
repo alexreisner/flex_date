@@ -18,15 +18,18 @@ day at all. You want to <tt>explicitly</tt> enter a part of the date as
 FlexDate addresses this problem by extending Ruby's included Date class.
 At the moment the following methods are provided to create partial dates:
 
-  year=()
-  month=()
-  day=()
-  FlexDate.new(year, month, date) # any of these parameters can be nil
+  FlexDate.new(year = nil, month = nil, date = nil)
+  year=(int)
+  month=(int)
+  day=(int)
 
 Where a full date (year, month, and day) is specified, a FlexDate behaves
 exactly like a normal Ruby Date. When a partial date is specified, only the
 following methods will behave as desired:
 
+  year
+  month
+  day
   strftime
 
 
