@@ -104,4 +104,11 @@ complete (specifies year, month, and day).
 Any comments or suggestions regarding this design are welcome.
 
 
+== To-do List
+
+* <tt>MultipartDate::multipart_date</tt> should also generate a setter method. 
+* Fix: <tt>FlexDate#strftime</tt> returns empty string if any part of the
+format string is not printable. Should print what it can (is this really useful?).
+
+
 Copyright (c) 2008 Alex Reisner (alex@alexreisner.com), released under the MIT license.
