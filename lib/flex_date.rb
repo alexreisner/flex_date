@@ -11,6 +11,27 @@ class FlexDate
   end
   
   ##
+  # Define some preset date formats.
+  #
+  DATE_FORMATS = {
+    :short      => "%b %e",
+    :medium     => "%Y %b %e",
+    :long       => "%B %e, %Y",
+    :db         => "%Y-%m-%d",
+    :number     => "%Y%m%d",
+    :rfc822     => "%e %b %Y"
+  }
+
+  ##
+  # String representation of a date.
+  #
+  def to_s(format)
+    format = DATE_FORMATS[format]
+    d = complete? ? real_date : phony_date 
+    d.strftime(format)
+  end
+  
+  ##
   # Does this FlexDate specify a year, month, and day?
   #
   def complete?
@@ -19,7 +40,7 @@ class FlexDate
   
   ##
   # Same as Date#strftime but gracefully removes missing parts.
-  # FIXME: If any part is missing, the whole string is made empty.
+  # FIXME: If any part is missing, the whole string is empty.
   #
   def strftime(format = '%F')
     # If we have a complete date, just let Date handle it.
@@ -64,10 +85,9 @@ class FlexDate
   end
   
   ##
-  # Get a phony Date object with "1" set for any unknown parts.
+  # Get a Date object with "1" set for any unknown parts.
   #
   def phony_date
     Date.new((@year || 1), (@month || 1), (@day || 1))
   end
 end
-

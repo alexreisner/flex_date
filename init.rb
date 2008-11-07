@@ -17,4 +17,3 @@ module MultipartDate
 end
 
 ActiveRecord::Base.send(:extend, MultipartDate)
-

@@ -33,6 +33,57 @@ following methods will behave as desired:
   strftime
 
 
+== Installation
+
+To install FlexDate, use the standard Rails plugin installation script:
+
+  script/plugin install git://github.com/alexreisner/flex_date.git 
+
+
+== Integration with Rails/ActiveRecord
+
+The MultipartDate module facilitates integration of FlexDate with
+ActiveRecord models. It requires that you store each date in three separate
+columns, each with a _y, _m, or _d suffix. So, if you have a Person model that
+stores birthdays, the columns required would be (all integers):
+
+  birthday_y
+  birthday_m
+  birthday_d
+
+Then, simply put this in your Person model:
+
+  multipart_date :birthday
+
+and you'll be able to do things like this:
+
+  # Initialize a new Person object.
+  p = Person.new(:birthday_y => 1964, :birthday_m => 8, :birthday_d => 23)
+  
+  # See if their birthday is set.
+  p.birthday?   
+    => true
+
+  # Get their birthday as a FlexDate object.
+  b = p.birthday
+    => #<FlexDate:0xb78b542c ...>
+  
+  # Display their birthday nicely.
+  p.birthday.to_s(:long)
+    => "August 23, 1964"
+
+And, of course, because you're using FlexDate, you can store partial dates,
+so you don't need to know the year to store the month and day of someone's
+birthday.
+
+I've also written another Rails plugin called Informant which provides a
+full-featured FormBuilder class, and includes a <tt>multipart_date_select</tt>
+field type which is the perfect compliment to MultipartDate in your Rails
+application. Install Informant from my Git repository:
+
+  script/plugin install git://github.com/alexreisner/informant.git 
+
+
 == The Implementation
 
 You might expect FlexDate to be a subclass of Date, but this is not the case.
