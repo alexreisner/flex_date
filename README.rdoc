@@ -7,31 +7,27 @@ Written by Alex Reisner (alex@alexreisner.com).
 
 == The Problem
 
-Imagine you are collecting dates of historic events but you don't always have
-exact dates. For example, you might know that an event occurred in March of
-1862 but you don't know the exact day. You could store this as a Ruby Date
-object that looks like '1862-03-01' but, really, you don't want to specify a
-day at all. You want to <b>explicitly not store</b> the day part of the date.
+Imagine you are collecting dates of historic events but you don't always have exact dates. For example, you might know that an event occurred in March of 1862 but you don't know the exact day. You could store this as a Ruby Date object that looks like '1862-03-01' but, really, you don't want to specify a day at all. You want to <b>explicitly not store</b> the day part of the date.
 
 
 == The Solution
 
-FlexDate addresses this problem by extending Ruby's included Date class.
-At the moment the following methods are provided to create partial dates:
+FlexDate addresses this problem by extending Ruby's included Date class. At the moment the following methods are provided to create partial dates:
 
   FlexDate.new(year = nil, month = nil, date = nil)
   year=(int)
   month=(int)
   day=(int)
 
-Where a full date (year, month, and day) is specified, a FlexDate behaves
-exactly like a normal Ruby Date. When a partial date is specified, only the
-following methods will behave as desired:
+Where a full date (year, month, and day) is specified, a FlexDate behaves exactly like a normal Ruby Date. When a partial date is specified, only the following methods will work:
 
   year
   month
   day
+  to_s
   strftime
+
+I hope to have date arithmetic operators working soon.
 
 
 == Installation
@@ -43,24 +39,20 @@ To install FlexDate, use the standard Rails plugin installation script:
 
 == Integration with Rails/ActiveRecord
 
-The MultipartDate module facilitates integration of FlexDate with
-ActiveRecord models. It requires that you store each date in three separate
-columns, each with a _y, _m, or _d suffix. So, if you have a Person model that
-stores birthdays, the columns required would be (all integers):
+The MultipartDate module facilitates integration of FlexDate with ActiveRecord models. It requires that you store each date in three separate columns, each with a _y, _m, or _d suffix. So, if you have a Person model that stores birthdays, the columns required would be (all integers):
 
   birthday_y
   birthday_m
   birthday_d
 
-Then, simply put this in your Person model (you can list multiple attributes if
-needed):
+Then, simply put this in your Person model (you can list multiple attributes if needed):
 
   multipart_date :birthday
 
 and you'll be able to do things like this:
 
-  # Initialize a new Person object.
-  p = Person.new(:birthday_y => 1964, :birthday_m => 8, :birthday_d => 23)
+  # Initialize a new Person object (don't know year they were born).
+  p = Person.new(:birthday_m => 8, :birthday_d => 23)
   
   # See if their birthday is set.
   p.birthday?   
@@ -72,34 +64,24 @@ and you'll be able to do things like this:
   
   # Display their birthday nicely.
   p.birthday.to_s(:long)
+    => "August 23"
+  
+  # Add the year when you find out.
+  p.birthday_y = 1964
+  p.birthday.to_s(:long)
     => "August 23, 1964"
+   
 
-But the real advantage is that, because you're using FlexDate, you can store
-partial dates so you don't need to know the year to store the month and day of
-someone's birthday.
-
-I've also written another Rails plugin called Informant which provides a
-full-featured FormBuilder class, and includes a <tt>multipart_date_select</tt>
-field type which is a good compliment to MultipartDate in your Rails
-application. Install Informant from my Git repository:
+I've also written another Rails plugin called Informant which provides a full-featured FormBuilder class, and includes a <tt>multipart_date_select</tt> field type which is a good compliment to MultipartDate in your Rails application. Install Informant from my Git repository:
 
   script/plugin install git://github.com/alexreisner/informant.git 
 
 
 == Code Discussion
 
-You might expect FlexDate to be a subclass of Date, but this is not the case.
-That implementation would be far more complicated because the instance methods
-of Date require certain instance variables to be set, and to meet certain
-requirements for validity. Massaging the Date class to accept an invalid
-date seems like the wrong approach for the modest goals of FlexDate, which is
-simply to allow storing of partial dates, and duplicate the behavior
-of the Date class <b>when a date is complete</b>.
+You might expect FlexDate to be a subclass of Date, but this is not the case. That implementation would be far more complicated because the instance methods of Date require certain instance variables to be set, and to meet certain requirements for validity. Massaging the Date class to accept an invalid date seems like the wrong approach for the modest goals of FlexDate, which is simply to allow storing of partial dates, and duplicate the behavior of the Date class <b>when a date is complete</b>.
 
-So instead, FlexDate is a very simple class that inherits from nothing,
-provides some (hopefully) useful methods for partial dates, and uses
-<tt>method_missing</tt> to fall back to Date when a FlexDate object is
-complete (specifies year, month, and day).
+So instead, FlexDate is a very simple class that inherits from nothing, provides some (hopefully) useful methods for partial dates, and uses <tt>method_missing</tt> to fall back to Date when a FlexDate object is complete (specifies year, month, and day).
 
 Any comments or suggestions regarding this design are welcome.
 
@@ -107,7 +89,6 @@ Any comments or suggestions regarding this design are welcome.
 == To-do List
 
 * <tt>MultipartDate::multipart_date</tt> should also generate a setter method. 
-* Fix: <tt>FlexDate#strftime</tt> returns empty string if any part of the format string is not printable. Should print what it can (is this really useful?).
 * Make date arithmetic work (Date minus FlexDate works, but neither FlexDate minus Date or FlexDate minus FlexDate works). 
 
 

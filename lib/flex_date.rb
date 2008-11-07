@@ -15,7 +15,7 @@ class FlexDate
   #
   DATE_FORMATS = {
     :short      => "%b %e",
-    :medium     => "%Y %b %e",
+    :medium     => "%e %b %Y",
     :long       => "%B %e, %Y",
     :db         => "%Y-%m-%d",
     :number     => "%Y%m%d",
@@ -23,12 +23,24 @@ class FlexDate
   }
 
   ##
-  # String representation of a date.
+  # String representation of a date. Pass a <tt>strftime</tt>-format string
+  # or a symbol which is a key in the DATE_FORMATS hash.
   #
-  def to_s(format)
-    format = DATE_FORMATS[format]
-    d = complete? ? real_date : phony_date 
-    d.strftime(format)
+  def to_s(format = :medium)
+    format = DATE_FORMATS[format] if format.is_a?(Symbol)
+    s = strftime(format)
+    
+    # Do some rough cleanup (this isn't very "programmatic").
+    replacements = [
+      [/^[ ,]+/, ''], # leading whitespace and commas
+      [/[ ,]+$/, ''], # trailing whitespace and commas
+      [/ +, +/, ' '], # commas and whitespace in middle
+    ]
+    s.strip!
+    replacements.each do |r|
+      s.gsub!(r[0], r[1])
+    end
+    s
   end
   
   ##
@@ -40,14 +52,13 @@ class FlexDate
   
   ##
   # Same as Date#strftime but gracefully removes missing parts.
-  # FIXME: If any part is missing, the whole string is empty.
   #
   def strftime(format = '%F')
     # If we have a complete date, just let Date handle it.
     return real_date.strftime(format) if complete?
     
     # If we have a partial date, define token dependencies.
-    tokens = {
+    dependencies = {
       :year  => %w(C c D F G g u V v w x Y y),
       :month => %w(B b c D F h m u V v w x),
       :day   => %w(A a c D d e F j u V v w x),
@@ -57,11 +68,12 @@ class FlexDate
     # Remove tokens that refer to missing parts.
     format.gsub!(/%([-_0^#]+)?(\d+)?[EO]?(:{1,3}z|.)/m) do |m|
       s, w, c = $1, $2, $3
-      tokens.each do |part,token_list|
-        missing = instance_variable_get("@#{part}").nil?
-        return '' if (token_list.include?(c) and missing)
+      ok = true
+      dependencies.each do |attr,tokens|
+        missing = instance_variable_get("@#{attr}").nil?
+        ok = false if (tokens.include?(c) and missing)
       end
-      m
+      ok ? m : ''
     end
     phony_date.strftime(format)
   end

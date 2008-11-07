@@ -41,5 +41,9 @@ class FlexDateTest < Test::Unit::TestCase
     f.year = 2087
     assert_equal "2087", f.strftime("%Y")
     assert_equal "2087-", f.strftime("%Y-%m")
+    assert_equal "2087", f.to_s("%Y")
+    assert_equal "2087", f.to_s(:long)
+    f.month = 8
+    assert_equal "Aug 2087", f.to_s("%b %e, %Y")
   end
 end
