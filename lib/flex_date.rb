@@ -66,7 +66,7 @@ class FlexDate
     }
 
     # Remove tokens that refer to missing parts.
-    format.gsub!(/%([-_0^#]+)?(\d+)?[EO]?(:{1,3}z|.)/m) do |m|
+    format = format.gsub!(/%([-_0^#]+)?(\d+)?[EO]?(:{1,3}z|.)/m) do |m|
       s, w, c = $1, $2, $3
       ok = true
       dependencies.each do |attr,tokens|
