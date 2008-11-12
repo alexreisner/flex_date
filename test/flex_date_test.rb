@@ -46,4 +46,17 @@ class FlexDateTest < Test::Unit::TestCase
     f.month = 8
     assert_equal "Aug 2087", f.to_s("%b %e, %Y")
   end
+  
+  def test_comparison_and_equality
+    a = FlexDate.new(2008,6,4)
+    b = FlexDate.new(2004,9,30)
+    assert_equal 0, a <=> a
+    assert a == a
+    assert a != b
+    assert_equal 1, a <=> b
+    c = FlexDate.new(2004)
+    d = FlexDate.new(1980,8,3)
+    e = FlexDate.new(1945,6)
+    assert_equal [e,d,c,b,a], [b,e,a,d,c].sort
+  end
 end

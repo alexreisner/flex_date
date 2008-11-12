@@ -27,7 +27,7 @@ Where a full date (year, month, and day) is specified, a FlexDate behaves exactl
   to_s
   strftime
 
-I hope to have date arithmetic operators working soon.
+Comparison operators also (== and <=>) work and I hope to have date arithmetic operators (+ and -) up and running soon.
 
 
 == Installation

@@ -1,6 +1,21 @@
 require 'date'
 class FlexDate
-
+  include Comparable
+  
+  def <=>(other)
+    spaceship = 0 # start assuming equal
+    %w(year month day).each do |p|
+      a = eval("self.#{p}") || 0
+      b = eval("other.#{p}") || 0
+      break if (spaceship = a <=> b) != 0
+    end
+    spaceship
+  end
+  
+  def ==(other)
+    [year,month,day] == [other.year, other.month, other.day]
+  end
+  
   attr_accessor :year, :month, :day
   
   ##
