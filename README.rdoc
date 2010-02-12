@@ -2,7 +2,7 @@
 
 Flexible dates for Ruby.
 
-<b>Geocoder is currently compatible with Rails 2.x and Rails 3.</b>
+<b>FledDate is currently compatible with Rails 2.x and Rails 3.</b>
 
 
 == The Problem
