@@ -2,12 +2,12 @@
 
 Flexible dates for Ruby.
 
-Written by Alex Reisner (alex@alexreisner.com).
+<b>Geocoder is currently compatible with Rails 2.x and Rails 3.</b>
 
 
 == The Problem
 
-Imagine you are collecting dates of historic events but you don't always have exact dates. For example, you might know that an event occurred in March of 1862 but you don't know the exact day. You could store this as a Ruby Date object that looks like '1862-03-01' but, really, you don't want to specify a day at all. You want to <b>explicitly not store</b> the day part of the date.
+You are collecting dates of historic events but you don't always have <i>exact</i> dates. For example, you might know that an event occurred in March of 1862 but you don't know the exact day. You could store this as a Ruby Date object that looks like '1862-03-01' but, really, you don't want to specify a day at all. You want to <b>explicitly not store</b> the day part of the date.
 
 
 == The Solution
